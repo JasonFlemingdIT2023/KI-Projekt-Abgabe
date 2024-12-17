@@ -44,7 +44,9 @@ Im Folgendem ist ein Klassendiagramm, welches die genannten Abhängigkeiten aufz
 Wie zu erwarten liegt ein Kernproblem verständlicherweise in der Anzahl an Städten. Je mehr Städte durch den User eingegeben werden, desto unwahrscheinlicher wird es die beste Distanz zu finden, da der Algorithmus dabei an Performanz verliert, wenn auch die Temperatur im Vergleich niedrig gesetzt wird. Dies drückt sich vor allem bei der linearen Kühlung aus. Die visuelle Datstellung leidet ab mehr als 100 Städten dementsprechend auch.
 Eine Schwierigkeit lag auch im bestimmen der lokalen Minima, da sich hier auch viele Ansätze boten. In dem vorher beschriebenen Ansatz lag die Problematik eine maxImprovement-Grenze für exponentielles Verhalten zu setzen, weil bei sehr geringen oder sehr hohen Temperaturen die lokalen Minima entweder in großer Zahl ausgegeben wurden oder garnicht. Dies ließ sich durch den Logarithmus einschränken. 
 Insgesamt ist die Funktionsweise des Programms vor allem durch die Benutzereingaben geprägt und dient vor allem dem Vergleich von verschiedenen Strategien und Parameterwahlen bei diesem Algorithmus.
+
 Jene Aussagen die getätigt wurden entsprangen zahlreichen Testungen des Programms.
+Da alle Klassen im selben Ordner sind wurden auch keine weiteren Imports zwischen diesen durchgeführt.
 
 ## Quellen
 
