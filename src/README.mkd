@@ -1,0 +1,58 @@
+# Lösen des Traveling Salesman Problem mit simuliertem Abkühlen
+
+## Einführung in die Verfahren
+Bei dem Traveling Salesman Problem handelt es sich um eines der bekanntesten Routing Probleme der Informatik. Gegeben ist eine bestimmte Anzahl an Städten, welche alle von einem Salesman besucht werden. Gesucht wird hierbei eine Minimalroute, welche die kürzeste Gesamtroute zwischen allen Städten darstellt. Die Route wird mit der zuerst besuchten Stadt abgeschlossen. [2]
+
+Jene Problematik lässt sich nun durch eine Vielzahl von Optimierungsalgorithmen angehen. Der hier gewählte Ansatz beschäftigt sich mit dem simulierten Abkühlen. Es handelt sich um ein Gradientenabstiegsverfahren, welcher ein globales Minimum der Energiefunktion anstrebt. Beziehen wir dies auf das TSP, so wird in einem Iterationsablauf die kürzeste Route gesucht und lokale Minima vermieden. In anderen Abstiegsverfahren ist es teilweise typisch in solchen Minima "hängen zu bleiben". Man oszilliert in dem Minima oder dem Plateu für die restlichen Iterationen und es wird eine gute Route gefunden, aber nicht die optimalste. In jeder Iteration wird des weiteren durch eine Mutation die beste Route aus dem vorherigen Ablauf verändert und mit der vorherigen verglichen. [3]
+
+ Charackteristisch für das Simulierte Abkühlen ist hierbei ein Temperaturparameter. Jener Parameter sorgt in Kombination mit einer Wahrscheinlichkeitsfunktion dafür, dass in einer Iteration auch die schlechtere Route im Vergleich gewählt werden kann. Die Temperatur wird in jeder Wiederholung in Form einer Kühlungsrate reduziert und wenn sie einen Wert unterschreitet ist der Algoritmus beendet. In Folge sorgen hohe Temperaturwerte auch für eine größere Wahrscheinlichkeit die schlechtere Route zu akzeptieren und eine niedrige Temperatur verringert die Wahrscheinlichkeit. Bezieht man das auf die Energiefunktion, so werden in den ersten Iterationen alle möglichen Routen in einer Exploring Phase erkundet, während man sich langsam einer optimalen Route nähert. Im späteren Verlauf findet man sich in einer Exploiting Phase wieder, wobei hier durch eine drastischere Reduzierung der Gesamtdistanz in ein globales Minima abgestiegen wird. [1], [3]
+
+
+
+## Funktionsweise des Programmes und Fragen
+
+### Frage 1
+ In Bezug zur ersten Frage gab es viele Möglichkeiten dieses Problem zu modellieren. In diesem Ansatz wurde sich entschieden die Städte in einer City Klasse zu definieren. Eine Stadt wird auf einen 2D-Feld modelliert und verfügt dementsprechend über eine X- und eine Y-Koordinate. Durch die Funktion calculateDistance wird die euklidische Distanz zwischen zwei Städten auf dem 2D-Feld berechnet. Jene beliebige Anzahl an Städten wird in einer Salesman Klasse als ArrayList zusammengefasst. Durch addCities können sie hinzugefügt werden und und durch calculateRouteDistance wird eine ArrayList übergeben und die Gesamtdistanz der Route für die Städteanordnung in der ArrayList berechnet.
+
+ Durch die Klasse RouteVisualizer wird die spätere Lösung in einem JFrame visuell dargestellt, wobei die Städte durch Punkte aufgezeigt werden und durch Linien verbunden werden.
+
+### Frage 2
+Wie wird das simulierte Kühlen nun umgesetzt? Dies beantwortet auch gleich die Frage wie Candidate Lösungen generiert werden. Das Abkühlen geschieht in einer Schleife bis die Temperatur einen Wert von 1 unterschreitet. Durch die Funktion generateRoutes wird in jeder Iteration durch die vorherige Route eine neue kreiert. Dies geschieht durch eine Mutation. In diesem Fall drückt sich die Veränderung dadurch aus, dass zwei zufällige Städte im ListArray miteinander getauscht werden. Diese neue Candidate Lösung wird nun in der kalkulierten Länge mit der vorherigen verglichen. In der Wahrscheinlickeitsfunktion acceptanceProbability wird entschieden, ob die neue Distanz mit der Route in den nächsten Iterationschritt übernommen wird. Ist die neue Distanz kürzer, dann wird die Route definitiv übernommen. Wenn sie nicht besser ist als die vorherige, dann wird diese mit einer gewissen Wahrscheinlickeit, in Abhängigkeit vom Temperaturparameter, trotzdem übernommen.
+
+Am Ende eines Schleifendurchlaufes wird die Temperatur durch eine der Kühlungsstrategien dezimiert. Hierbei stehen linear und exponentiell zur Auswahl.
+
+### Frage 3
+Die Frage wie der Algorithmus entscheidet, ob er die lokal optimale Lösung gefunden hat geschieht ebenfalls in der Annealing Klasse. Im Optimalfall hat jener Algorithmus das globale Minimum am Ende des Algorithmus gefunden, wenn die Temepratur fast bei 0 liegt. Dennoch lies sich auch in zahlreichen Test durch die ausgegebenen Rundenupdates feststellen, dass der Algorithmus an vielen Stellen bei denselben Distanzen verweilt, was dafür sprechen kann, dass sich an diesen Stellen lokale Minima befinden. 
+
+Um diese Minima aufzugreifen wurde der Klasse das ListArray localMinimas hinzugefügt, welches diese loggen soll. Hierfür gibt es einen noImprovementCounter, welcher jedes Mal inkrementiert wird, wenn die neu gefundene Distanz im Durchlauf größer ist als die bisherige beste Distanz. Andernfalls wird er wieder auf Null gesetzt. Spezifisch für die Temperatur, Kühlungsrate und Kühlungsstrategie wird in der Funktion calculateMaxNoImprovement eine Grenze maxNoImprovement festgelegt. Wird diese vom Counter überschritten, dann wird unter anderem die aktuelle Distanz als lokales Minimum gelogged und wird später in der Main ausgegeben. (auf Duplikate wird vorher geprüft)
+
+Diese Funktionalitäten werden letztendlich beim Programmstart in der Main ausgeführt. Dem Anwender steht es hierbei vollkommen frei die Parameter zu bestimmen. Neben der Temperatur, der Strategie und der Rate, kann dieser auch selber die Koordinaten der Städte festlegen, aber sie auch randomisieren. Dementsprechend gibt es viele Usereingaben, welche jedoch alle durch die Klasse InputValidation in Form von regulären Ausdrücken validiert werden.
+
+Nach einem Durchlauf werden neben Rundenupdates, lokalen Minima und der besten Distanz auch die Reihenfolge der besten Route ausgegeben. Für Vergleichszwecke hat der User ebenso die Möglichkeit mit der initialen Route einen weiteren Durchlauf zu starten, um Parameteränderungen etc. zu vergleichen.
+
+
+
+## Klassendiagramm
+Im Folgendem ist ein Klassendiagramm, welches die genannten Abhängigkeiten aufzeigt:
+
+![alt text](image.png)
+
+
+
+
+## Probleme
+Wie zu erwarten liegt ein Kernproblem verständlicherweise in der Anzahl an Städten. Je mehr Städte durch den User eingegeben werden, desto unwahrscheinlicher wird es die beste Distanz zu finden, da der Algorithmus dabei an Performanz verliert, wenn auch die Temperatur im Vergleich niedrig gesetzt wird. Dies drückt sich vor allem bei der linearen Kühlung aus. Die visuelle Datstellung leidet ab mehr als 100 Städten dementsprechend auch.
+Eine Schwierigkeit lag auch im bestimmen der lokalen Minima, da sich hier auch viele Ansätze boten. In dem vorher beschriebenen Ansatz lag die Problematik eine maxImprovement-Grenze für exponentielles Verhalten zu setzen, weil bei sehr geringen oder sehr hohen Temperaturen die lokalen Minima entweder in großer Zahl ausgegeben wurden oder garnicht. Dies ließ sich durch den Logarithmus einschränken. 
+Insgesamt ist die Funktionsweise des Programms vor allem durch die Benutzereingaben geprägt und dient vor allem dem Vergleich von verschiedenen Strategien und Parameterwahlen bei diesem Algorithmus.
+Jene Aussagen die getätigt wurden entsprangen zahlreichen Testungen des Programms.
+
+## Quellen
+
+
+[1] vgl. Aarts, E.H.L./ Korst, J.H.M. / Laarhoven, van, P.J.M. (1997): Simulated annealing, Local search in combinatorial optimization, Wiley-Interscience, S.91-120 
+
+[2] vgl. Fischetti, M./ Salazar-Gonzalez, J./ Toth, P. (2006): The Travelings Salesman Problem and its Variations, 10.1007/0-306-48213-4_13, S.609-662
+
+[3] vgl. Kinnebrock, W. (1994): Neuronale Netze: Grundlagen, Anwendungen, Bei
+spiele, 2. Auflage, Fachhochschule Rheinland-Pfalz, Bingen 1994, S.60-67 
+
