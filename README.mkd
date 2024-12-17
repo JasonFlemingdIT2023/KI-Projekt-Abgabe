@@ -35,7 +35,7 @@ Nach einem Durchlauf werden neben Rundenupdates, lokalen Minima und der besten D
 ## Klassendiagramm
 Im Folgendem ist ein Klassendiagramm, welches die genannten Abhängigkeiten aufzeigt:
 
-![alt text](image.png)
+![alt text](classDiagramm.png)
 
 
 
